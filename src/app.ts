@@ -1,67 +1,35 @@
-import express, { Application } from "express";
-import { OrderController } from "./controllers/order";
-import { PharmacyController } from "./controllers/pharmacies/pharamcy";
+import express, { Application, Request, Response } from "express";
+import { PharmacyController } from "./controllers/pharamcy";
 import { PharmacyService } from "./services/pharmacyService";
-import { OrderService } from "./services/orderService";
 import { ENV_VARIABLE } from "./utils/env";
-//  import healthmart from "./routes/healthMart"
+import healthmartRouter from "./routes/healthmart";
+import careplusRouter from "./routes/careplus";
+import quickcareRouter from "./routes/quickcare";
 
 const app: Application = express();
-const PORT = ENV_VARIABLE.PORT;
-const pharmacyService = new PharmacyService(ENV_VARIABLE.PHARMACY_BASE_URL);
-const orderService = new OrderService();
-const orderController = new OrderController(orderService);
-const pharmacyController= new PharmacyController(pharmacyService)
+const PORT: number = ENV_VARIABLE.PORT;
+const pharmacyService: PharmacyService = new PharmacyService(
+  ENV_VARIABLE.PHARMACY_BASE_URL
+);
+const pharmacyController: PharmacyController = new PharmacyController(
+  pharmacyService
+);
 
 app.use(express.json());
 
-// app.use('/healthmart',healthmart)
+app
+  .route("/pharmacy")
+  .get(
+    async (req: Request, resp: Response) =>
+      await pharmacyController.getPharmacyList(req, resp)
+  );
 
-app.route('/pharmacy').get(async (req,resp)=> await pharmacyController.getPharmacyList(req,resp))
+app.use("/healthmart", healthmartRouter);
 
-/**------------------------------HEALTHMART--------------------------------------------- */
+app.use("/careplus", careplusRouter);
 
-app.route('/healthmart/orders').all((req,resp,next)=>{
-    const pharmacyName=req.url.split('/')[1]
-    resp.locals.pharmacyName=pharmacyName
-    next()
-})
-.post(async (req,resp)=> await pharmacyController.createOrder(req,resp))
-.get(async (req,resp)=> await pharmacyController.getOrders(req,resp))
-
-app.route('/healthmart/orders/:id')
-.get(async (req,resp)=> await pharmacyController.getOrderById(req,resp))
-
-/**----------------------------------CAREPLUS----------------------------------------- */
-app.route('/careplus/orders').all((req,resp,next)=>{
-    const pharmacyName=req.url.split('/')[1]
-    resp.locals.pharmacyName=pharmacyName
-    next()
-})
-.post(async (req,resp)=> await pharmacyController.createOrder(req,resp))
-.get(async (req,resp)=> await pharmacyController.getOrders(req,resp))
-
-app.route('/careplus/orders/:id')
-.get(async (req,resp)=> await pharmacyController.getOrderById(req,resp))
-
-
-/**-------------------------------------QUICKCARE-------------------------------------- */
-
-app.route('/quickcare/orders').all((req,resp,next)=>{
-    const pharmacyName=req.url.split('/')[1]
-    resp.locals.pharmacyName=pharmacyName
-    next()
-})
-.post(async (req,resp)=> await pharmacyController.createOrder(req,resp))
-.get(async (req,resp)=> await pharmacyController.getOrders(req,resp))
-
-app.route('/quickcare/orders/:id')
-.get(async (req,resp)=> await pharmacyController.getOrderById(req,resp))
-
-/**--------------------------------------------------------------------------- */
+app.use("/quickcare", quickcareRouter);
 
 app.listen(PORT, () => {
   console.log(`We are listening on PORT : ${PORT}`);
 });
-
-// export default app;

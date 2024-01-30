@@ -1,20 +1,32 @@
-import { Order } from "../types/order";
-import { generateOrderId } from "../utils/common";
+import axios, { AxiosResponse } from "axios";
 
 export class OrderService {
-  private orders: Order[] = [];
+  private baseUrl: string;
+  constructor(baseUrl: string) {
+    this.baseUrl = baseUrl;
+  }
 
-  createOrder = (products: string[], pharmaOrderId: string): Order => {
-    const order: Order = {
-      orderId: generateOrderId(),
-      products,
-      pharmaOrderId,
-    };
-    this.orders.push(order);
-    return order;
+  getOrderById = async (pharmacyName: string, orderId: string) => {
+    const orderIdUrl: string = `/${pharmacyName.toLowerCase()}/orders/${orderId}`;
+    const orderDetails: AxiosResponse = await axios.get(
+      `${this.baseUrl}${orderIdUrl}`
+    );
+    return orderDetails.data;
   };
 
-  getOrders = (): Order[] => {
-    return this.orders;
+  getOrders = async (pharmacyName: string) => {
+    const orderUrl: string = `/${pharmacyName.toLowerCase()}/orders/`;
+    const orderDetails: AxiosResponse = await axios.get(
+      `${this.baseUrl}${orderUrl}`
+    );
+    return orderDetails.data;
+  };
+  createOrder = async (pharmacyName: string, products: any): Promise<any> => {
+    const createOrderUrl: string = `/${pharmacyName.toLowerCase()}/orders`;
+    const response: AxiosResponse = await axios.post(
+      `${this.baseUrl}${createOrderUrl}`,
+      products
+    );
+    return response.data;
   };
 }

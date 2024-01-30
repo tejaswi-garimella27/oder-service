@@ -1,8 +1,7 @@
-export const generateOrderId = (): string => {
-    return Date.now().toString();
-  };
+import { Request, Response } from "express";
 
-
-  export const getPharamcyName = ()=>{
-    
-  }
+export const getPharamcyName = (req: Request, resp: Response): Response => {
+  const pharmacyName: string = req.originalUrl.split("/")[1];
+  resp.locals.pharmacyName = pharmacyName;
+  return resp;
+};

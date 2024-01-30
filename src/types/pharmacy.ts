@@ -1,4 +1,11 @@
 export interface Pharmacy {
-    pharmaId:string;
-    products:string[];
+  integrationName: string;
+  name: string;
+  address: string;
+  city: string;
+  state: string;
+  zipcode: string;
+  country: string;
+  fax: string;
+  phone: string;
 }
