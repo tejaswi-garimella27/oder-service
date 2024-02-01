@@ -5,7 +5,6 @@ const getNodeEnv = ():NODE_ENV => {
     case 'dev':
       return NODE_ENV.DEV;
       default:
-        case 'dev':
           return NODE_ENV.DEV;
   }
 };

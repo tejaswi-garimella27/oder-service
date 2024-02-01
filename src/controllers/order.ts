@@ -1,32 +1,30 @@
-import expres, { Request, Response } from "express";
+import { Request, Response } from "express";
 import { OrderService } from "../services/orderService";
+import { Order } from "../types/order";
 
 export class OrderController {
   private orderService: OrderService;
   constructor(orderService: OrderService) {
     this.orderService = orderService;
   }
-  createOrder = async (req: Request, resp: Response): Promise<Response> => {
-    const body = req.body;
-    const order = await this.orderService.createOrder(
-      resp.locals.pharmacyName,
-      body
-    );
-    return resp.json(order);
-  };
-
-  getOrders = async (req: Request, resp: Response): Promise<Response> => {
-    const ordersList = await this.orderService.getOrders(
-      resp.locals.pharmacyName
-    );
+ 
+  getInternalOrders = async (
+    req: Request,
+    resp: Response
+  ): Promise<Response> => {
+    const ordersList = await this.orderService.getInternalOrders();
     return resp.json(ordersList);
   };
 
-  getOrderById = async (req: Request, resp: Response): Promise<Response> => {
-    const id: string = req.params.id;
-    const ordersList = await this.orderService.getOrderById(
-      resp.locals.pharmacyName,
-      id
+  createInternalOrders = async (
+    req: Request,
+    resp: Response
+  ): Promise<Response> => {
+    const products :string[]= req.body.products;
+    const pharmacyId: string = req.body.pharmacyOrderId;
+    const ordersList: Order = await this.orderService.createInternalOrders(
+      products,
+      pharmacyId
     );
     return resp.json(ordersList);
   };

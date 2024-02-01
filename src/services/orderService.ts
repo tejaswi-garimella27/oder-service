@@ -1,32 +1,26 @@
-import axios, { AxiosResponse } from "axios";
+import { CONSTANTS } from "../ApiConstants";
+import { Order } from "../types/order";
 
 export class OrderService {
-  private baseUrl: string;
-  constructor(baseUrl: string) {
-    this.baseUrl = baseUrl;
+  private orders: Order[] = [];
+
+  createInternalOrders(products: string[], pharmacyOrderId: string): Order {
+
+    if (!products.length) {
+      throw new Error(CONSTANTS.INVALID_PRODUCTS_LENGTH.toString());
+    }
+
+    const order: Order = {
+      id: Date.now().toString(),
+      products,
+      pharmacyOrderId,
+    };
+    this.orders.push(order);
+    return order;
   }
 
-  getOrderById = async (pharmacyName: string, orderId: string) => {
-    const orderIdUrl: string = `/${pharmacyName.toLowerCase()}/orders/${orderId}`;
-    const orderDetails: AxiosResponse = await axios.get(
-      `${this.baseUrl}${orderIdUrl}`
-    );
-    return orderDetails.data;
-  };
+  getInternalOrders(): Order[] {
+    return this.orders;
+  }
 
-  getOrders = async (pharmacyName: string) => {
-    const orderUrl: string = `/${pharmacyName.toLowerCase()}/orders/`;
-    const orderDetails: AxiosResponse = await axios.get(
-      `${this.baseUrl}${orderUrl}`
-    );
-    return orderDetails.data;
-  };
-  createOrder = async (pharmacyName: string, products: any): Promise<any> => {
-    const createOrderUrl: string = `/${pharmacyName.toLowerCase()}/orders`;
-    const response: AxiosResponse = await axios.post(
-      `${this.baseUrl}${createOrderUrl}`,
-      products
-    );
-    return response.data;
-  };
 }
