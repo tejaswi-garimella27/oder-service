@@ -1,7 +1,11 @@
 import axios, { AxiosResponse } from "axios";
 import { Pharmacy } from "../types/pharmacy";
 import { CONSTANTS } from "../ApiConstants";
-import { CarePlusOrderPayload, HealthMartOrderPayload, QuickCareOrderPayload } from "../types/pharmacy";
+import {
+  CarePlusOrderPayload,
+  HealthMartOrderPayload,
+  QuickCareOrderPayload,
+} from "../types/pharmacy";
 
 export class PharmacyService {
   private baseUrl: string;
@@ -20,37 +24,47 @@ export class PharmacyService {
     pharmacyName: string,
     orderId: string
   ): Promise<AxiosResponse> => {
-      const orderIdUrl: string = `/${pharmacyName.toLowerCase()}${CONSTANTS.PHARMACY_ORDERS_URL}/${orderId}`;
-      const orderDetails: AxiosResponse = await axios
-        .get(`${this.baseUrl}${orderIdUrl}`)
+    const orderIdUrl: string = `/${pharmacyName.toLowerCase()}${
+      CONSTANTS.PHARMACY_ORDERS_URL
+    }/${orderId}`;
+    const orderDetails: AxiosResponse = await axios.get(
+      `${this.baseUrl}${orderIdUrl}`
+    );
 
-        if (!orderDetails.data) {
-          throw new Error(CONSTANTS.NULL_ERROR.toString());
-        }
-      return orderDetails.data;
+    if (!orderDetails.data) {
+      throw new Error(CONSTANTS.NULL_ERROR.toString());
+    }
+    return orderDetails.data;
   };
 
   getOrders = async (pharmacyName: string): Promise<AxiosResponse> => {
-      const orderUrl: string = `/${pharmacyName.toLowerCase()}${CONSTANTS.PHARMACY_ORDERS_URL}`;
-      const orderDetails = await axios.get(
-        `${this.baseUrl}${orderUrl}`
-      )
-      if (!orderDetails.data) {
-        throw new Error(CONSTANTS.NULL_ERROR.toString());
-      }
-      return orderDetails.data;
+    const orderUrl: string = `/${pharmacyName.toLowerCase()}${
+      CONSTANTS.PHARMACY_ORDERS_URL
+    }`;
+    const orderDetails = await axios.get(`${this.baseUrl}${orderUrl}`);
+    if (!orderDetails.data) {
+      throw new Error(CONSTANTS.NULL_ERROR.toString());
+    }
+    return orderDetails.data;
   };
 
   createOrder = async (
     pharmacyName: string,
-    products: HealthMartOrderPayload|QuickCareOrderPayload|CarePlusOrderPayload
+    products:
+      | HealthMartOrderPayload
+      | QuickCareOrderPayload
+      | CarePlusOrderPayload
   ): Promise<AxiosResponse> => {
-      const createOrderUrl: string = `/${pharmacyName.toLowerCase()}${CONSTANTS.PHARMACY_ORDERS_URL}`;
-      const newOrder: AxiosResponse = await axios
-        .post(`${this.baseUrl}${createOrderUrl}`, products)
-        if (!newOrder.data) {
-          throw new Error(CONSTANTS.NULL_ERROR.toString());
-        }
-      return newOrder.data||{};
+    const createOrderUrl: string = `/${pharmacyName.toLowerCase()}${
+      CONSTANTS.PHARMACY_ORDERS_URL
+    }`;
+    const newOrder: AxiosResponse = await axios.post(
+      `${this.baseUrl}${createOrderUrl}`,
+      products
+    );
+    if (!newOrder.data) {
+      throw new Error(CONSTANTS.NULL_ERROR.toString());
+    }
+    return newOrder.data || {};
   };
 }
